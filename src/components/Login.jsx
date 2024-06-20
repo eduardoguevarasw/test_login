@@ -22,7 +22,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-
+import useStore  from "../useStore.js";
 const Login = () => {
   const [FormData, setFormData] = useState({
     username: "",
@@ -96,21 +96,23 @@ const Login = () => {
   };
 
   const navigate = useNavigate();
+  const setToken = useStore((state) => state.setToken);
 
   const handleForceLogin = () => {
-
     //enviar los mismos datos pero con la opcion de forzar=true
-    axios.post("https://perfectosri.software-total.com/api/v1/login/", {
-      username: FormData.username,
-      password: FormData.password,
-      forzar: true,
-    })
-    .then((response) => {
-      const token = response.data.data.token;
-      localStorage.setItem("token", token);
-      navigate("/dashboard");
-
-    })
+    axios
+      .post("https://perfectosri.software-total.com/api/v1/login/", {
+        username: FormData.username,
+        password: FormData.password,
+        forzar: true,
+      })
+      .then((response) => {
+        const token = response.data.data.token;
+        localStorage.setItem("token", token);
+        navigate("/dashboard");
+        //guardar el token
+        setToken(token);
+      });
     handleCloseModal();
   };
 
